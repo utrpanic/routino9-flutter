@@ -1,11 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-
-final dummyItems = [
-  'https://cdn.pixabay.com/photo/2018/11/12/18/44/thanksgiving-3811492_1280.jpg',
-  'https://cdn.pixabay.com/photo/2019/10/30/15/33/tajikistan-4589831_1280.jpg',
-  'https://cdn.pixabay.com/photo/2019/11/25/16/15/safari-4652364_1280.jpg',
-];
 
 void main() => runApp(MyApp());
 
@@ -14,241 +7,166 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(primaryColor: Colors.red),
-      home: MyHomePage(),
-      localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
-        DefaultMaterialLocalizations.delegate,
-        DefaultWidgetsLocalizations.delegate,
-      ],
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+      ),
+      home: BmiMain(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class BmiMain extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _BmiMainState createState() => _BmiMainState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  var _index = 0;
-  var _pages = [
-    HomeTab(),
-    ServiceTab(),
-    MyAccountTab(),
-  ];
+class _BmiMainState extends State<BmiMain> {
+  final _formKey = GlobalKey<FormState>();
+
+  final _heightController = TextEditingController();
+  final _weightController = TextEditingController();
+
+  @override
+  void dispose() {
+    _heightController.dispose();
+    _weightController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          '복잡한 UI',
-          style: TextStyle(color: Colors.black),
-        ),
-        centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.add,
-              color: Colors.black,
-            ),
-            onPressed: () {},
-          )
-        ],
-      ),
-      body: _pages[_index],
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) {
-          setState(() {
-            _index = index;
-          });
-        },
-        currentIndex: _index,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            title: Text('Home'),
-            icon: Icon(Icons.home),
-          ),
-          BottomNavigationBarItem(
-            title: Text('Service'),
-            icon: Icon(Icons.assignment),
-          ),
-          BottomNavigationBarItem(
-            title: Text('My Account'),
-            icon: Icon(Icons.account_circle),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class HomeTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        _buildTop(),
-        _buildMiddle(),
-        _buildBottom(),
-      ],
-    );
-  }
-
-  Widget _buildTop() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 20),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  print('클릭');
+      appBar: AppBar(title: Text('비만도 계산기')),
+      body: Container(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: '키',
+                ),
+                controller: _heightController,
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value.trim().isEmpty) {
+                    return '키를 입력하세요';
+                  }
+                  return null;
                 },
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.local_taxi,
-                      size: 40,
-                    ),
-                    Text('택시'),
-                  ],
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: '몸무게',
                 ),
+                controller: _weightController,
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value.trim().isEmpty) {
+                    return '몸무게를 입력하세요';
+                  }
+                  return null;
+                },
               ),
-              Column(
-                children: [
-                  Icon(
-                    Icons.local_taxi,
-                    size: 40,
-                  ),
-                  Text('블랙'),
-                ],
-              ),
-              Column(
-                children: [
-                  Icon(
-                    Icons.local_taxi,
-                    size: 40,
-                  ),
-                  Text('바이크'),
-                ],
-              ),
-              Column(
-                children: [
-                  Icon(
-                    Icons.local_taxi,
-                    size: 40,
-                  ),
-                  Text('대리'),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(
-                children: [
-                  Icon(
-                    Icons.local_taxi,
-                    size: 40,
-                  ),
-                  Text('택시'),
-                ],
-              ),
-              Column(
-                children: [
-                  Icon(
-                    Icons.local_taxi,
-                    size: 40,
-                  ),
-                  Text('블랙'),
-                ],
-              ),
-              Column(
-                children: [
-                  Icon(
-                    Icons.local_taxi,
-                    size: 40,
-                  ),
-                  Text('바이크'),
-                ],
-              ),
-              Opacity(
-                opacity: 0.0,
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.local_taxi,
-                      size: 40,
-                    ),
-                    Text('대리'),
-                  ],
+              Container(
+                margin: const EdgeInsets.only(top: 16.0),
+                alignment: Alignment.centerRight,
+                child: RaisedButton(
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BmiResult(
+                            double.parse(_heightController.text.trim()),
+                            double.parse(_weightController.text.trim()),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text('결과'),
                 ),
               ),
             ],
           ),
-        ],
+        ),
+      ),
+    );
+  }
+}
+
+class BmiResult extends StatelessWidget {
+  final double height;
+  final double weight;
+
+  BmiResult(this.height, this.weight);
+
+  @override
+  Widget build(BuildContext context) {
+    final bmi = weight / ((height / 100) * (height / 100));
+    print('bmi : $bmi');
+    return Scaffold(
+      appBar: AppBar(title: Text('비만도 계산기')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              _calcBmi(bmi),
+              style: TextStyle(fontSize: 36),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            _buildIcon(bmi),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildMiddle() {
-    return CarouselSlider(
-      options: CarouselOptions(
-        height: 150.0,
-        autoPlay: true,
-      ),
-      items: dummyItems.map((url) {
-        return Builder(
-          builder: (BuildContext context) {
-            return Container(
-              width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.symmetric(horizontal: 5.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                  url,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            );
-          },
-        );
-      }).toList(),
-    );
+  String _calcBmi(double bmi) {
+    var result = '저체중';
+    if (bmi >= 35) {
+      result = '고도 비만';
+    } else if (bmi >= 30) {
+      result = '2단계 비만';
+    } else if (bmi >= 25) {
+      result = '1단계 비만';
+    } else if (bmi >= 23) {
+      result = '과체중';
+    } else if (bmi >= 18.5) {
+      result = '정상';
+    }
+    return result;
   }
 
-  Widget _buildBottom() {
-    final items = List.generate(10, (i) {
-      return ListTile(
-        leading: Icon(Icons.notifications_none),
-        title: Text('[이벤트] 이것은 공지사항입니다.'),
+  Widget _buildIcon(double bmi) {
+    if (bmi >= 23) {
+      return Icon(
+        Icons.sentiment_dissatisfied,
+        color: Colors.red,
+        size: 100,
       );
-    });
-    return ListView(
-      physics: NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      children: items,
-    );
-  }
-}
-
-class ServiceTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class MyAccountTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
+    } else if (bmi >= 18.5) {
+      return Icon(
+        Icons.sentiment_satisfied,
+        color: Colors.green,
+        size: 100,
+      );
+    } else {
+      return Icon(
+        Icons.sentiment_dissatisfied,
+        color: Colors.orange,
+        size: 100,
+      );
+    }
   }
 }
