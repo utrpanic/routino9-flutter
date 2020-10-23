@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 void main() => runApp(MyApp());
 
@@ -6,167 +7,142 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'StopWatch',
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: BmiMain(),
+      home: StopWatchPage(),
     );
   }
 }
 
-class BmiMain extends StatefulWidget {
+class StopWatchPage extends StatefulWidget {
   @override
-  _BmiMainState createState() => _BmiMainState();
+  _StopWatchPageState createState() => _StopWatchPageState();
 }
 
-class _BmiMainState extends State<BmiMain> {
-  final _formKey = GlobalKey<FormState>();
+class _StopWatchPageState extends State<StopWatchPage> {
+  Timer _timer;
 
-  final _heightController = TextEditingController();
-  final _weightController = TextEditingController();
+  var _time = 0;
+  var _isRunning = false;
+  List<String> _lapTimes = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('StopWatch'),
+      ),
+      body: _buildBody(),
+      bottomNavigationBar: BottomAppBar(
+        child: Container(
+          height: 50.0,
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => setState(() {
+          _clickButton();
+        }),
+        child: _isRunning ? Icon(Icons.pause) : Icon(Icons.play_arrow),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
+  }
 
   @override
   void dispose() {
-    _heightController.dispose();
-    _weightController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('비만도 계산기')),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: '키',
-                ),
-                controller: _heightController,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value.trim().isEmpty) {
-                    return '키를 입력하세요';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: '몸무게',
-                ),
-                controller: _weightController,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value.trim().isEmpty) {
-                    return '몸무게를 입력하세요';
-                  }
-                  return null;
-                },
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 16.0),
-                alignment: Alignment.centerRight,
-                child: RaisedButton(
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BmiResult(
-                            double.parse(_heightController.text.trim()),
-                            double.parse(_weightController.text.trim()),
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  child: Text('결과'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class BmiResult extends StatelessWidget {
-  final double height;
-  final double weight;
-
-  BmiResult(this.height, this.weight);
-
-  @override
-  Widget build(BuildContext context) {
-    final bmi = weight / ((height / 100) * (height / 100));
-    print('bmi : $bmi');
-    return Scaffold(
-      appBar: AppBar(title: Text('비만도 계산기')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildBody() {
+    var sec = _time ~/ 100;
+    var hundredth = '${_time % 100}'.padLeft(2, '0');
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 30),
+        child: Stack(
           children: <Widget>[
-            Text(
-              _calcBmi(bmi),
-              style: TextStyle(fontSize: 36),
+            Column(
+              children: <Widget>[
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        '$sec',
+                        style: TextStyle(fontSize: 50.0),
+                      ),
+                      Text(
+                        '$hundredth',
+                      )
+                    ]),
+                Container(
+                  width: 100,
+                  height: 200,
+                  child: ListView(
+                    children: _lapTimes.map((time) => Text(time)).toList(),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(
-              height: 16,
+            Positioned(
+              left: 10,
+              bottom: 10,
+              child: FloatingActionButton(
+                backgroundColor: Colors.deepOrange,
+                onPressed: _reset,
+                child: Icon(Icons.rotate_left),
+              ),
             ),
-            _buildIcon(bmi),
+            Positioned(
+              right: 10,
+              bottom: 10,
+              child: RaisedButton(
+                onPressed: () {
+                  _recordLapTime('$sec.$hundredth');
+                },
+                child: Text('랩타임'),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  String _calcBmi(double bmi) {
-    var result = '저체중';
-    if (bmi >= 35) {
-      result = '고도 비만';
-    } else if (bmi >= 30) {
-      result = '2단계 비만';
-    } else if (bmi >= 25) {
-      result = '1단계 비만';
-    } else if (bmi >= 23) {
-      result = '과체중';
-    } else if (bmi >= 18.5) {
-      result = '정상';
+  void _clickButton() {
+    _isRunning = !_isRunning;
+    if (_isRunning) {
+      _start();
+    } else {
+      _pause();
     }
-    return result;
   }
 
-  Widget _buildIcon(double bmi) {
-    if (bmi >= 23) {
-      return Icon(
-        Icons.sentiment_dissatisfied,
-        color: Colors.red,
-        size: 100,
-      );
-    } else if (bmi >= 18.5) {
-      return Icon(
-        Icons.sentiment_satisfied,
-        color: Colors.green,
-        size: 100,
-      );
-    } else {
-      return Icon(
-        Icons.sentiment_dissatisfied,
-        color: Colors.orange,
-        size: 100,
-      );
-    }
+  void _reset() {
+    setState(() {
+      _isRunning = false;
+      _timer?.cancel();
+      _lapTimes.clear();
+      _time = 0;
+    });
+  }
+
+  void _start() {
+    _timer = Timer.periodic(Duration(milliseconds: 10), (timer) {
+      setState(() {
+        _time++;
+      });
+    });
+  }
+
+  void _pause() {
+    _timer?.cancel();
+  }
+
+  void _recordLapTime(String time) {
+    _lapTimes.add('${_lapTimes.length + 1}등 $time');
   }
 }
