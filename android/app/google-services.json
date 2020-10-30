@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "108844086625",
+    "firebase_url": "https://routino-c6ace.firebaseio.com",
+    "project_id": "routino-c6ace",
+    "storage_bucket": "routino-c6ace.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108844086625:android:4bdb3ff614ba40479f8120",
+        "android_client_info": {
+          "package_name": "dev.utrpanic.routino9"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "108844086625-cv3iaa1kk2o9hb0cocsu2g2lpti1bl5u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIu95sawOocZh8Npc21PyrhZX6Prv5vC4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "108844086625-cv3iaa1kk2o9hb0cocsu2g2lpti1bl5u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

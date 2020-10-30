@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>108844086625-rruj3r2ohg4qogtov9qla1i820snj1ae.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.108844086625-rruj3r2ohg4qogtov9qla1i820snj1ae</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC2mLo9jl6P-7CYFE-cLzECO_f20ScK3r0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>108844086625</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>dev.utrpanic.routino9</string>
+	<key>PROJECT_ID</key>
+	<string>routino-c6ace</string>
+	<key>STORAGE_BUCKET</key>
+	<string>routino-c6ace.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:108844086625:ios:febb26ef5976c49c9f8120</string>
+	<key>DATABASE_URL</key>
+	<string>https://routino-c6ace.firebaseio.com</string>
+</dict>
+</plist>
